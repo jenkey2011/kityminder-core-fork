@@ -36,9 +36,22 @@ define(function(require, exports, module) {
             }
         });
 
+        var ClearRelationTextStyle = kity.createClass('ClearRelationTextStyleCommand', {
+            base: Command,
+            execute: function(km) {
+                var nodes = km.getSelectedRelations();
+                nodes.forEach(function(n) {
+                    n.setDefaultTextStyle();
+                    n.render();
+                });
+            }
+        });
+
         return {
             commands: {
                 'updateRelationLine': UpdateRelationLine,
+                'updateRelationText': UpdateRelationLine,
+                'clearRelationTextStyle': ClearRelationTextStyle
             },
             events: {
                 'normal.mousemove': function(e) {
@@ -52,7 +65,7 @@ define(function(require, exports, module) {
                         this._selectedRelation.forEach(function(relation){
                             relation.pointGroup.items.forEach(function(item){
                                 item.stroke('rgba(99, 115, 130, 0.5)');
-                            })
+                            });
                         })
                     }
                 },
@@ -60,8 +73,8 @@ define(function(require, exports, module) {
                     if (this.isFocused()) {
                         this._selectedRelation.forEach(function(relation){
                             relation.pointGroup.items.forEach(function(item){
-                                item.stroke('#3F92FF');
-                            })
+                                item.stroke('#2970FF');
+                            });
                         })
                     }
                 }
@@ -104,11 +117,11 @@ define(function(require, exports, module) {
             var strokeStyle = this.getData('line-style');
             var markerMap = {
                 start: {
-                    dot: '',
+                    dot: this.dotMarker,
                     arrow: this.leftMarker,
                 },
                 end: {
-                    dot: '',
+                    dot: this.dotMarker,
                     arrow: this.rightMarker,
                 },
             };

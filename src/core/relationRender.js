@@ -1,26 +1,42 @@
+/**
+ * @file Relation Render
+ */
 define(function(require, exports, module) {
     var kity = require('./kity');
-    var utils = require('./utils');
     var MinderRelation = require('./relation');
     var PointGroup = require('./point');
-    var Marker = {
+
+    var markerMap = {
+        createDotMarker: function() {
+            return new kity.Marker().pipe(function() {
+                var r = 6;
+                var dot = new kity.Circle(r);
+                this.addShape(dot);
+                this.setRef(r, 0).setViewBox(-r, -r, r + r, r + r).setWidth(r).setHeight(r);
+                this.shape = dot;
+                this.node.setAttribute('markerUnits', 'userSpaceOnUse');
+            });
+        },
+
         creatRightMarker: function() {
             return new kity.Marker().pipe(function() {
-                var shape = new kity.Path('M0,0 L0,12 L12,6 z');
+                var w = 8, half = w / 2;
+                var shape = new kity.Path('M0,0 L0,' + w + ' L' + w + ',' + half + ' z');
                 this.addShape(shape);
-                this.setRef(6, 6).setViewBox(0, 0, 12, 12).setWidth(12).setHeight(12);
+                this.setRef(0, half).setViewBox(0, 0, w, w).setWidth(w).setHeight(w);
                 this.shape = shape;
-                this.node.id = utils.uuid('marker');
+                this.node.setAttribute('markerUnits', 'userSpaceOnUse');
             });
         },
 
         creatLeftMarker: function() {
             return new kity.Marker().pipe(function() {
-                var shape = new kity.Path('M0,6 L12,12 L12,0 z');
+                var w = 8, half = w / 2;
+                var shape = new kity.Path('M0,' + half + ' L' + w + ',' + w + ' L' + w + ',0 z');
                 this.addShape(shape);
-                this.setRef(6, 6).setViewBox(0, 0, 12, 12).setWidth(12).setHeight(12);
+                this.setRef(half, half).setViewBox(0, 0, w, w).setWidth(w).setHeight(w);
                 this.shape = shape;
-                this.node.id = utils.uuid('marker');
+                this.node.setAttribute('markerUnits', 'userSpaceOnUse');
             });
         }
     };
@@ -38,10 +54,12 @@ define(function(require, exports, module) {
 
         creatMarker: function() {
             var minder = this.getMinder();
-            this.rightMarker = Marker.creatRightMarker();
-            this.leftMarker = Marker.creatLeftMarker();
+            this.rightMarker = markerMap.creatRightMarker();
+            this.leftMarker = markerMap.creatLeftMarker();
+            this.dotMarker = markerMap.createDotMarker();
             minder.getPaper().addResource(this.rightMarker);
             minder.getPaper().addResource(this.leftMarker);
+            minder.getPaper().addResource(this.dotMarker);
         },
 
         setControllerPoint: function(index, point) {
@@ -56,7 +74,7 @@ define(function(require, exports, module) {
         setTextPosition: function() {
             var _contentBox = this._contentBox;
             var pos = kity.g.pointAtPath(this.getLine().pathdata, 0.5)
-                .offset(-_contentBox.width / 2 + 4, -_contentBox.height / 2 + 4);
+                .offset(_contentBox.width / 2 * -1, _contentBox.height / 2 * -1);
             this.textGroup.setTranslate(pos);
         },
 
@@ -81,19 +99,17 @@ define(function(require, exports, module) {
             this.lineCopy.setStyle('opacity', this.isSelected() ? 1 : 0);
             if (km.isFocused()) {
                 this.pointGroup.items.forEach(function(item){
-                    item.stroke('#3F92FF');
+                    item.stroke('#2970FF');
                 });
             }
         },
 
         preSelect:function(){
-            this.pointGroup.setVisible(true);
             this.textGroup.setVisible(true);
             this.lineCopy.setStyle('opacity', 1);
             var _this = this;
             this.rc.once('mouseleave', function() {
                 if(_this.isSelected()) return;
-                _this.pointGroup.setVisible(false);
                 _this.textGroup.setVisible(_this.data.text);
                 _this.lineCopy.setStyle('opacity', 0);
             });

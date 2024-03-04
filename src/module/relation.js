@@ -130,7 +130,7 @@ define(function(require, exports, module) {
                     relationActivator.renderRelationAry(nodes.node);
                 },
 
-                'layoutRelation contentchange': function(e) {
+                'contentchange': function(e) {
                     var minder = e.minder;
                     var relations = minder.getRelations();
                     relations.forEach(function(relation) {

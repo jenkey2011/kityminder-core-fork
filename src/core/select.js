@@ -225,12 +225,6 @@ define(function(require, exports, module) {
             return this;
         },
 
-        selectRelationById: function(ids, isSingleSelect) {
-            ids = utils.isArray(ids) ? ids : [ids];
-            var relations = this.getRelationsById(ids);
-            return this.selectRelation(relations, isSingleSelect);
-        },
-
         getSelectedRelations: function() {
             return this._selectedRelation;
         },

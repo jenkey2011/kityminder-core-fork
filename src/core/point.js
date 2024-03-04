@@ -44,7 +44,7 @@ define(function(require, exports, module) {
                 },
 
                 pen: {
-                    width: 2 * 1
+                    width: 1.5 * 1
                 }
 
             };
@@ -175,13 +175,14 @@ define(function(require, exports, module) {
             // 更新图形
             shape.forward.setCenter(forward.x, forward.y);
             shape.backward.setCenter(backward.x, backward.y);
-            if(index == 0) {
+            if (index == 0) {
                 shape.line.setPoint1(forward.x, forward.y).setPoint2(vertex.x, vertex.y);
-            } else if(index == 1) {
+            }
+            else if(index == 1) {
                 shape.line.setPoint1(vertex.x, vertex.y).setPoint2(backward.x, backward.y);
             }
-            shape.vertex.setPosition(vertex.x - this.exterior.vertex.width / 2, vertex.y - this.exterior.vertex.height / 2);
 
+            shape.vertex.setPosition(vertex.x - this.exterior.vertex.width / 2, vertex.y - this.exterior.vertex.height / 2);
             this._stroke(shape.vertex);
 
         },
@@ -297,15 +298,16 @@ define(function(require, exports, module) {
 
             var line = this['line' + index].setPoint1(forward.x, forward.y).setPoint2(backward.x, backward.y);
 
-            line.stroke(new kity.Pen(new kity.Color("#3F92FF")).setWidth(this.exterior.pen.width));
+            line.stroke(new kity.Pen(new kity.Color("#2970FF")).setWidth(this.exterior.pen.width));
 
 
             return line;
 
         },
+
         _stroke: function(shape, fillColor) {
 
-            shape.stroke(new kity.Pen(new kity.Color("#3F92FF")).setWidth(this.exterior.pen.width));
+            shape.stroke(new kity.Pen(new kity.Color("#2970FF")).setWidth(this.exterior.pen.width));
             shape.fill(new kity.Color(fillColor || "#fff"));
 
         },
