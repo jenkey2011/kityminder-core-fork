@@ -218,6 +218,13 @@ define(function(require, exports, module) {
          */
         importRelation: function(data) {
             var me = this;
+
+            // 先清空老数据
+            var oldRelations = this.getRelations();
+            for (i = oldRelations.length - 1; i >= 0; i--) {
+                me.removeRelationNode(oldRelations[i]);
+            }
+
             (data || []).forEach(function(item) {
                 me.createRelation(item);
             });

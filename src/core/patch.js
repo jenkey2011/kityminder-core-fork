@@ -8,6 +8,7 @@
  */
 define(function(require, exports, module) {
     var kity = require('./kity');
+    var utils = require('./utils');
     var Minder = require('./minder');
 
     function insertNode(minder, info, parent, index) {
@@ -152,7 +153,7 @@ define(function(require, exports, module) {
                         return;
                     }
                     else{
-                        minder.importRelation(relation);
+                        minder.createRelation(relation);
                     }
                 });
                 break;

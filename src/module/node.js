@@ -79,23 +79,33 @@ define(function(require, exports, module) {
         base: Command,
         execute: function(km) {
             var nodes = km.getSelectedNodes();
-            var ancestor = MinderNode.getCommonAncestor.apply(null, nodes);
-            var index = nodes[0].getIndex();
+            var selectedRelations = km.getSelectedRelations();
+            if (nodes && nodes.length > 0) {
+                var ancestor = MinderNode.getCommonAncestor.apply(null, nodes);
+                var index = nodes[0].getIndex();
 
-            nodes.forEach(function(node) {
-                if (!node.isRoot()) km.removeNode(node);
-            });
-            if (nodes.length == 1) {
-                var selectBack = ancestor.children[index - 1] || ancestor.children[index];
-                km.select(selectBack || ancestor || km.getRoot(), true);
-            } else {
-                km.select(ancestor || km.getRoot(), true);
+                nodes.forEach(function(node) {
+                    if (!node.isRoot()) km.removeNode(node);
+                });
+                if (nodes.length == 1) {
+                    var selectBack = ancestor.children[index - 1] || ancestor.children[index];
+                    km.select(selectBack || ancestor || km.getRoot(), true);
+                } else {
+                    km.select(ancestor || km.getRoot(), true);
+                }
+                km.layout(600);
             }
-            km.layout(600);
+            else if (selectedRelations.length > 0) {
+                selectedRelations.forEach(function(relation) {
+                    km.removeRelationNode(relation);
+                });
+            }
+
         },
         queryState: function(km) {
             var selectedNode = km.getSelectedNode();
-            return selectedNode && !selectedNode.isRoot() ? 0 : -1;
+            var selectedRelations = km.getSelectedRelations();
+            return (selectedNode && !selectedNode.isRoot()) || (selectedRelations.length > 0) ? 0 : -1;
         }
     });
 

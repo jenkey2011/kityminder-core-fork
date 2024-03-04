@@ -1,13 +1,34 @@
+/**
+ * @file relation core
+ */
+
 define(function(require, exports, module) {
     var kity = require('./kity');
     var utils = require('./utils');
     var Minder = require('./minder');
     var MinderNode = require('./node');
 
+    var defaultLineStyle = {
+        'line-width': 1.5,
+        'line-color': '#999',
+        'line-style': 'sysDot',
+        'from-marker': '',
+        'to-marker': 'arrow',
+    };
+
+    var defaultTextStyle = {
+        'color': '#999',
+        'font-size': 14,
+        'font-weight': '',
+        'font-family': '',
+        'font-style': '',
+        'text-decoration': '',
+    };
+
     /**
      * @class MinderRelation
      *
-     * 表示一条联系线数据
+     * 关联线
      */
     var minderNode = new MinderNode();
     var MinderRelation = kity.createClass('MinderRelation', {
@@ -26,17 +47,14 @@ define(function(require, exports, module) {
                 text: '',
                 from: '',
                 to: '',
-                'line-width': 1.5,
-                'line-color': '#000',
-                'line-style': 'sysDot',
-                'from-marker': '',
-                'to-marker': 'arrow'
             };
 
             this._modifyStatus = {};
             this.editable = false;
             this.initRelation();
             this.type = 'relation';
+            this.setDefaultLineStyle();
+            this.setDefaultTextStyle();
 
             if (utils.isString(textOrData)) {
                 this.setText(textOrData);
@@ -67,22 +85,36 @@ define(function(require, exports, module) {
             return this.line;
         },
 
+        setDefaultTextStyle: function() {
+            utils.extend(this.data, defaultTextStyle);
+        },
+
+        setDefaultLineStyle: function() {
+            utils.extend(this.data, defaultLineStyle);
+        },
+
         getLineStyle: function() {
-            return {
-                'line-color': this.getData('line-color'),
-                'line-width': this.getData('line-width'),
-                'line-style': this.getData('line-style'),
-                'from-marker': this.getData('from-marker'),
-                'to-marker': this.getData('to-marker')
-            };
+            var me = this;
+            return Object.keys(defaultLineStyle).reduce(function(obj, key) {
+                obj[key] = me.data[key];
+                return obj;
+            }, {});
+        },
+
+        getTextStyle: function() {
+            var me = this;
+            return Object.keys(defaultTextStyle).reduce(function(obj, key) {
+                obj[key] = me.data[key];
+                return obj;
+            }, {});
         },
 
         getFromNode: function() {
-            return this.getMinder().getNodeById(this.getData('from'));
+            return this.getMinder().getNodeById(this.data.from);
         },
 
         getToNode: function() {
-            return this.getMinder().getNodeById(this.getData('to'));
+            return this.getMinder().getNodeById(this.data.to);
         },
 
         getMinder: function() {
@@ -123,13 +155,14 @@ define(function(require, exports, module) {
         },
 
         setData: function(key, value) {
-            if(typeof key == 'object') {
+            if (typeof key === 'object') {
                 var data = key;
-                for(key in data)
-                    if(data.hasOwnProperty(key)) {
+                for (key in data)
+                    if (data.hasOwnProperty(key)) {
                         this.data[key] = data[key];
                     }
-            } else {
+            }
+            else {
                 this.data[key] = value;
             }
             return this;
@@ -149,11 +182,15 @@ define(function(require, exports, module) {
 
         update: function() {
             var minder = this.getMinder();
-            var fromNode = minder.getNodeById(this.getData('from'));
-            var toNode = minder.getNodeById(this.getData('to'));
+            var fromNode = minder.getNodeById(this.data.from);
+            var toNode = minder.getNodeById(this.data.to);
             var rc = this.getRelationRenderContainer();
 
-            if(!fromNode || !toNode) return;
+            if(!fromNode || !toNode) {
+                rc.setVisible(false);
+                return;
+            };
+
             if((!fromNode.isRoot() && fromNode.getParent().isCollapsed()) ||
                 (toNode.isRoot() && toNode.getParent().isCollapsed())) {
                 rc.setVisible(false);
@@ -162,8 +199,8 @@ define(function(require, exports, module) {
 
             this.updateLine();
             this.updateText();
-
             this.render();
+
             rc.setVisible(true);
         }
     });
@@ -175,9 +212,6 @@ define(function(require, exports, module) {
             relation.setMinder(this);
             relation.create();
             this._relationArray.push(relation);
-            this.fire('relationcreate', {
-                node: relation
-            });
             this.attachRelation(relation);
             return relation;
         },
@@ -186,17 +220,11 @@ define(function(require, exports, module) {
             var rc = relation.getRelationContainer();
             rc.addShape(relation.getRelationRenderContainer());
             rc.bringTop();
-            this.fire('relationattach', {
-                node: relation
-            });
         },
 
         detachRelation: function(relation) {
             var rc = relation.getRelationContainer();
             rc.removeShape(relation.getRelationRenderContainer());
-            this.fire('relationdetach', {
-                node: relation
-            });
         },
 
         removeRelationNode: function(relation) {
@@ -204,18 +232,19 @@ define(function(require, exports, module) {
             var index = relations.findIndex(function (item) {
                 return item.getData('id') === relation.getData('id');
             });
-            relations.splice(index, 0);
+            relations.splice(index, 1);
             this.detachRelation(relation);
         },
 
-        removeRelationByNode:function(node){
+        removeRelationByNode: function(node) {
+            var me = this;
             var relation = this.getRelationsByNodeId(node.getData('id'));
             relation.forEach(function (relation) {
-                relation.getRelationContainer().removeShape(relation.getRelationRenderContainer());
+                me.detachRelation(relation);
             });
         },
 
-        removeDisableRelation:function(){
+        removeDisableRelation: function() {
             var arr = [];
             var minder = this;
             var relations = this.getRelations();
@@ -225,11 +254,18 @@ define(function(require, exports, module) {
                 }
             });
 
-            if(arr.length>0){
-                arr.forEach(function(relation){
+            if (arr.length > 0) {
+                arr.forEach(function(relation) {
                     minder.removeRelationNode(relation);
                 });
             }
+        },
+
+        getRelationById: function(id) {
+            var relations = this.getRelations();
+            return relations.find(function (relation) {
+                return relation.data.id === id;
+            });
         },
 
         getRelationsByNodeId: function(nodeId) {
@@ -243,21 +279,10 @@ define(function(require, exports, module) {
             return result;
         },
 
-        getRelationsById: function(ids) {
-            var nodes = this.getRelationContainer().items;
-            var result = [];
-            nodes.forEach(function(node) {
-                if(ids.indexOf(node.relationNode.getData('id')) != -1) {
-                    result.push(node.relationNode);
-                }
-            });
-            return result;
-        },
-
         getRelations: function() {
             return this._relationArray || [];
         }
-    })
+    });
 
     module.exports = MinderRelation;
 });

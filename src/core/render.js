@@ -174,12 +174,12 @@ define(function(require, exports, module) {
             renderNode: function(node) {
                 var rendererClasses = this._rendererClasses;
                 var ifRelation = (node.__proto__.constructor.__KityClassName == 'MinderRelation');
-                if(ifRelation) {
+                if (ifRelation) {
                     rendererClasses = {
-                        center: this._rendererClasses['center'],
-                        outline: this._rendererClasses['outline']
+                        center: this._rendererClasses['center']
                     };
-                } else {
+                }
+                else {
                     rendererClasses = this._rendererClasses;
                 }
 
