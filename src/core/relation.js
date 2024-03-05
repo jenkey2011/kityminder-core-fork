@@ -9,21 +9,27 @@ define(function(require, exports, module) {
     var MinderNode = require('./node');
 
     var defaultLineStyle = {
-        'line-width': 1.5,
-        'line-color': '#999',
-        'line-style': 'sysDot',
-        'from-marker': '',
-        'to-marker': 'arrow',
+        'line-width': 1.5,          // 可选值：任意数字
+        'line-color': '#999',       // 可选值：任意颜色
+        'line-style': 'sysDot',     // 可选值：soild、sysDash、sysDot、dash、dashDot、dashDotDot
+        'from-marker': 'empty',     // 可选值：dot、arrow、empty
+        'to-marker': 'arrow',       // 可选值：dot、arrow、empty
     };
 
     var defaultTextStyle = {
-        'color': '#999',
-        'font-size': 14,
-        'font-weight': '',
-        'font-family': '',
-        'font-style': '',
-        'text-decoration': '',
+        'color': '#999',            // 可选值：任意颜色
+        'font-size': 14,            // 可选值：任意数字
+        'font-weight': 400,         // 可选值：400、700
+        'font-family': 'auto',      // 可选值：auto、其他字体名称
+        'font-style': 'normal',     // 可选值：normal, italic
+        'text-decoration': 'none',  // 可选值：none、underline、line-through
     };
+
+    var numberKeyList = [
+        'line-width',
+        'font-weight',
+        'font-size',
+    ];
 
     /**
      * @class MinderRelation
@@ -60,7 +66,7 @@ define(function(require, exports, module) {
                 this.setText(textOrData);
             }
             else if (utils.isObject(textOrData)) {
-                utils.extend(this.data, textOrData);
+                utils.extend(this.data, utils.omitEmptyKey(textOrData));
             }
         },
 
@@ -155,11 +161,15 @@ define(function(require, exports, module) {
         },
 
         setData: function(key, value) {
+            if (numberKeyList.includes(key)) {
+                value = Number(value);
+            }
+
             if (typeof key === 'object') {
                 var data = key;
                 for (key in data)
                     if (data.hasOwnProperty(key)) {
-                        this.data[key] = data[key];
+                        this.setData(key, data[key]);
                     }
             }
             else {
@@ -205,7 +215,7 @@ define(function(require, exports, module) {
         }
     });
 
-    kity.extendClass(Minder,{
+    kity.extendClass(Minder, {
 
         createRelation: function(data) {
             var relation = new MinderRelation(data);
