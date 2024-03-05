@@ -387,5 +387,14 @@ define(function(require, exports) {
 
     exports.lineToRect = function(a1,a2,r){
         return bezierLength.lineRect(a1,a2,r);
-    }
+    };
+
+    exports.omitEmptyKey = function(obj) {
+        var ret = {};
+        for (var key in obj) {
+            if (!obj[key]) continue;
+            ret[key] = obj[key];
+        }
+        return ret;
+    };
 });
