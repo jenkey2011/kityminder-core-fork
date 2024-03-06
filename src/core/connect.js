@@ -68,6 +68,11 @@ define(function(require, exports, module) {
             });
         });
         paper.addResource(gradient); // 添加到画布资源中
+        // 这里为了解决无法渲染直线渐变的问题
+        var svgGradient = gradient.node;
+        if (svgGradient) {
+            svgGradient.setAttribute('gradientUnits', 'userSpaceOnUse');
+        }
         gradientCache[id] = gradient; // 加入缓存
         return gradient;
     }
