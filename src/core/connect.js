@@ -116,6 +116,7 @@ define(function(require, exports, module) {
 
             // 默认纯色
             var strokeColor = node.getStyle('connect-color') || 'white';
+            var reverseStrokeColor = node.getStyle('connect-color') || 'white';
 
             // 创建渐变色引用
             var isRoot = parent.isRoot();
@@ -146,7 +147,7 @@ define(function(require, exports, module) {
                 var c1 = isRainbow ? '0' : '80%';
                 // 生成渐变，考虑正反两种情况
                 strokeColor = createGradient(gradientId, gradientColors, paper, c1);
-                var reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper);
+                reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper);
             }
 
             var strokeWidth = isRoot
