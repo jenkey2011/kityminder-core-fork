@@ -18,20 +18,35 @@ define(function(require, exports, module) {
             return _templates;
         }
     });
-
+    var DEFAULT_TEMPLATE = 'right';
+    var TEMP_TEMPLATE = '';
     kity.extendClass(Minder, (function() {
         var originGetTheme = Minder.prototype.getTheme;
         return {
+
+            isSupportTemplate: function(name) {
+                return !!_templates[name];
+            },
+
             useTemplate: function(name, duration) {
-                this.setTemplate(name);
+                this.setTemplate(name, 2222);
                 this.refresh(duration || 800);
             },
 
-            getTemplate: function() {
+            getTemplate: function(from) {
+                if (from === 'exportData' && TEMP_TEMPLATE) {
+                    return TEMP_TEMPLATE;
+                }
                 return this._template || 'default';
             },
 
-            setTemplate: function(name) {
+            setTemplate: function(name, fff) {
+                if(!this.isSupportTemplate(name)) {
+                    TEMP_TEMPLATE = name;
+                    name = DEFAULT_TEMPLATE;
+                    return this._template = name || null;
+                };
+                TEMP_TEMPLATE = '';
                 this._template = name || null;
             },
 
@@ -40,9 +55,10 @@ define(function(require, exports, module) {
                 return supports && supports[method];
             },
 
-            getTheme: function(node) {
+            getTheme: function(node, from) {
+                console.log('ggggggetslkjsadf');
                 var support = this.getTemplateSupport('getTheme') || originGetTheme;
-                return support.call(this, node);
+                return support.call(this, node, from);
             }
         };
     })());
