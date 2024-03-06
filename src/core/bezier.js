@@ -128,9 +128,9 @@ define(function(require, exports, module) {
 
         updateLineStyle: function() {
             var line = this.getLine();
-            var strokeWidth = this.getData('line-width') || 1.5;
-            var strokeColor = this.getData('line-color') || '#000';
-            var fromMarkerName = this.getData('from-marker') || 'dot';
+            var strokeWidth = this.getData('line-width');
+            var strokeColor = this.getData('line-color');
+            var fromMarkerName = this.getData('from-marker');
             var toMarkerName = this.getData('to-marker');
             var strokeStyle = this.getData('line-style');
             var markerMap = {

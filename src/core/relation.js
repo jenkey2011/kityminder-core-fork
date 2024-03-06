@@ -19,7 +19,7 @@ define(function(require, exports, module) {
     var defaultTextStyle = {
         'color': '#999',            // 可选值：任意颜色
         'font-size': 14,            // 可选值：任意数字
-        'font-weight': 400,         // 可选值：400、700
+        'font-weight': 'normal',    // 可选值：normal、bold
         'font-family': 'auto',      // 可选值：auto、其他字体名称
         'font-style': 'normal',     // 可选值：normal, italic
         'text-decoration': 'none',  // 可选值：none、underline、line-through
@@ -27,7 +27,6 @@ define(function(require, exports, module) {
 
     var numberKeyList = [
         'line-width',
-        'font-weight',
         'font-size',
     ];
 
@@ -201,8 +200,8 @@ define(function(require, exports, module) {
                 return;
             };
 
-            if((!fromNode.isRoot() && fromNode.getParent().isCollapsed()) ||
-                (toNode.isRoot() && toNode.getParent().isCollapsed())) {
+            if((fromNode.getParent() && fromNode.getParent().isCollapsed()) ||
+                (toNode.getParent() && toNode.getParent().isCollapsed())) {
                 rc.setVisible(false);
                 return;
             }
