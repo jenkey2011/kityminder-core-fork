@@ -135,6 +135,7 @@ define(function(require, exports, module) {
         });
     });
 
+    var autoLineBreak = false;
     var measureTextShape = null;
     var TextRenderer = kity.createClass('TextRenderer', {
         base: Renderer,
@@ -169,9 +170,9 @@ define(function(require, exports, module) {
                 if (!utils.isNumber(maxLength)) return text;
                 var j = 0;
                 var newText = '';
-                node.setData('autoLineBreak', false);
+                autoLineBreak = false;
                 if (calcTextWidth(text) > maxLength) {
-                    node.setData('autoLineBreak', true);
+                    autoLineBreak = true;
                     for (var i = j + 1, len = text.length; i <= len; i++) {
                         var textFragment = text.slice(j, i);
                         var textWidth = calcTextWidth(textFragment);
@@ -289,7 +290,7 @@ define(function(require, exports, module) {
                     rBox = rBox.merge(new kity.Box(0, y, bbox.height && bbox.width || 1, fontSize));
                 });
 
-                var width = utils.isNumber(textMaxWidth) && node.getData('autoLineBreak') ? textMaxWidth : r(rBox.width);
+                var width = utils.isNumber(textMaxWidth) && autoLineBreak ? textMaxWidth : r(rBox.width);
                 var nBox = new kity.Box(r(rBox.x), r(rBox.y), width, r(rBox.height));
 
                 node._currentTextGroupBox = nBox;
