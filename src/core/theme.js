@@ -50,6 +50,8 @@ define(function(require, exports, module) {
         }
     });
 
+    var DEFAULT_THEME = 'fresh-blue';
+    var TEMP_THEME = '';
     kity.extendClass(Minder, {
 
         /**
@@ -65,7 +67,12 @@ define(function(require, exports, module) {
         },
 
         setTheme: function(name) {
-            if (name && !_themes[name]) throw new Error('Theme ' + name + ' not exists!');
+            if (name && !_themes[name]) {
+                TEMP_THEME = name;
+                name = DEFAULT_THEME;
+            } else {
+                TEMP_THEME = '';
+            };
             var lastTheme = this._theme;
             this._theme = name || null;
             var container = this.getRenderTarget();
@@ -86,7 +93,10 @@ define(function(require, exports, module) {
          * 获取脑图实例上的当前主题
          * @return {[type]} [description]
          */
-        getTheme: function(node) {
+        getTheme: function(node, from) {
+            if (from === 'exportData' && TEMP_THEME) {
+                return TEMP_THEME;
+            }
             return this._theme || this.getOption('defaultTheme') || 'fresh-blue';
         },
 
