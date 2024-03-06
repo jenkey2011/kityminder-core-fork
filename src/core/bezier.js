@@ -47,11 +47,29 @@ define(function(require, exports, module) {
             }
         });
 
+        // 字体大小调整
+        var UpdateRelationFontSize =  kity.createClass('updaterelationfontsizeCommand', {
+                    base: Command,
+
+                    execute: function(km, diff) {
+                        var nodes = km.getSelectedRelations();
+                        nodes.forEach(function(n) {
+                            var oriSize = n.getData('font-size') || n.getStyle('font-size');
+                            var size = parseFloat(oriSize) + +diff;
+                            size = Math.max(9, Math.min(96, size));
+                            n.setData('font-size', size);
+                            n.render();
+                            km.layout(300);
+                        });
+                    }
+                })
+
         return {
             commands: {
                 'updateRelationLine': UpdateRelationLine,
                 'updateRelationText': UpdateRelationLine,
-                'clearRelationTextStyle': ClearRelationTextStyle
+                'clearRelationTextStyle': ClearRelationTextStyle,
+                'updateRelationFontSize': UpdateRelationFontSize
             },
             events: {
                 'normal.mousemove': function(e) {
