@@ -68,6 +68,7 @@ define(function(require, exports, module) {
             if (node.getType() === 'main' && node.getStyle('rainbow-branch')) {
                 var idx = node.getIndex();
                 fillColor = rainbowColors[idx % rainbowColors.length];
+                node.setData('background', fillColor);
             }
             outline
                 .setPosition(outlineBox.x, outlineBox.y)
