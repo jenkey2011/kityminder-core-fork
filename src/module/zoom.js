@@ -180,7 +180,7 @@ define(function(require, exports, module) {
             },
             events: {
                 'normal.beforetouchstart': function(e) {
-                    const touches = e.originEvent.touches;
+                    var touches = e.originEvent.touches;
                     if (touches && touches.length === 2) {
                         initialZommValue = this.getZoomValue();
                         initialDistance = Math.hypot(
@@ -191,7 +191,7 @@ define(function(require, exports, module) {
                 },
 
                 'normal.beforetouchmove': function(e) {
-                    const touches = e.originEvent.touches;
+                    var touches = e.originEvent.touches;
                     if (touches && touches.length === 2) {
                         lastDistance = Math.hypot(
                             touches[0].pageX - touches[1].pageX,

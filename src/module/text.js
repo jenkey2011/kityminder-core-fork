@@ -191,7 +191,7 @@ define(function(require, exports, module) {
             var nodeText = node.getText();
             var textArr = nodeText ? nodeText.split('\n') : [' '];
             textArr = kity.Utils.flatten(textArr.map(function (text) {
-                const newText = splitWithMaxLength(text, textMaxWidth);
+                var newText = splitWithMaxLength(text, textMaxWidth);
                 return newText.split('\n');
             }));
             // 非chrome浏览器 换行操作最后一个 会添加'' 需要移除
