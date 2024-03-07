@@ -29,7 +29,7 @@ define(function(require, exports, module) {
             },
 
             useTemplate: function(name, duration) {
-                this.setTemplate(name, 2222);
+                this.setTemplate(name);
                 this.refresh(duration || 800);
             },
 
