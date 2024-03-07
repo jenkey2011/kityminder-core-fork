@@ -286,11 +286,11 @@ define(function(require, exports) {
 
     // 根据两端点，计算第三个点与该连线对应夹角的坐标
     function calculatePoint(p1, p2, angle, len) {
-        const angleRad = angle * (Math.PI / 180);
-        const theta = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-        const thetaPrime = theta - angleRad;
-        const x3 = p1.x + len * Math.cos(thetaPrime);
-        const y3 = p1.y + len * Math.sin(thetaPrime);
+        var angleRad = angle * (Math.PI / 180);
+        var theta = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        var thetaPrime = theta - angleRad;
+        var x3 = p1.x + len * Math.cos(thetaPrime);
+        var y3 = p1.y + len * Math.sin(thetaPrime);
         return {x: x3, y: y3};
     }
 
