@@ -25,7 +25,8 @@ define(function(require, exports, module) {
         },
 
          shouldRender: function(node) {
-            return node.getStyle('underline-width');
+            var renderTypes = node.getStyle('underline-render-type');
+            return renderTypes && renderTypes.indexOf(node.getType()) > -1;
         },
 
         update: function(underline, node, box) {

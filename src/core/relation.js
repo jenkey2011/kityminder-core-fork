@@ -9,7 +9,7 @@ define(function(require, exports, module) {
     var MinderNode = require('./node');
 
     var defaultLineStyle = {
-        'line-width': 1.5,          // 可选值：任意数字
+        'line-width': 1,          // 可选值：任意数字
         'line-color': '#999',       // 可选值：任意颜色
         'line-style': 'sysDot',     // 可选值：soild、sysDash、sysDot、dash、dashDot、dashDotDot
         'from-marker': 'empty',     // 可选值：dot、arrow、empty
