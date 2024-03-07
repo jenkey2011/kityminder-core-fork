@@ -284,87 +284,108 @@ define(function(require, exports) {
         }
     }
 
+    // 根据两端点，计算第三个点与该连线对应夹角的坐标
+    function calculatePoint(p1, p2, angle, len) {
+        var angleRad = angle * (Math.PI / 180);
+        var theta = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        var thetaPrime = theta - angleRad;
+        var x3 = p1.x + len * Math.cos(thetaPrime);
+        var y3 = p1.y + len * Math.sin(thetaPrime);
+        return {x: x3, y: y3};
+    }
+
     // 求联系线 开始点+结束点+控制点
     exports.bezierPoint = function(relation, pos) {
         var fromNode = relation.getFromNode();
         var toNode = relation.getToNode() || pos || {x:0, y:0};
         var fromBox = fromNode.getLayoutBox();
-        var toBox;
-        var fromController, toController;
-        var xRatio = 0.5,
-            yRatio = 0.3;
-        var fromPoint, toPoint;
         var fromCenter = {
             x: fromBox.cx,
             y: fromBox.cy,
-        }
+        };
         var markerWidth = 8,
             markerHeight = 8;
+        var toBox;
         var toCenter = {};
         if (toNode.__KityClassName == 'MinderNode') {
             toBox = toNode.getLayoutBox();
             toCenter = {
                 x: toBox.cx,
                 y: toBox.cy,
-            }
+            };
         } else {
-            toCenter = {
+            toBox = {
+                cx:  toNode.x,
+                cy: toNode.y,
                 x: toNode.x,
                 y: toNode.y,
-            }
-        }
-
-        var vector = kity.Vector.fromPoints(fromCenter, toCenter);
-        if (!relation.data.controller0 || (!relation.data.controller0.x || !relation.data.controller0.y)) {
-            fromController = {
-                x: fromCenter.x + vector.x * xRatio,
-                y: fromCenter.y + vector.y * yRatio,
-            }
-        } else {
-            fromController = relation.data.controller0;
-        }
-        if (!relation.data.controller1 || (!relation.data.controller1.x || !relation.data.controller1.y)) {
-            toController = {
-                x: toCenter.x - vector.x * xRatio,
-                y: toCenter.y - vector.y * yRatio,
-            }
-        } else {
-            toController = relation.data.controller1;
-        }
-
-        fromPoint = bezierLength.lineRect({
-            x: fromCenter.x,
-            y: fromCenter.y
-        }, fromController, {
-            x: fromCenter.x - fromBox.width / 2 - markerWidth,
-            y: fromCenter.y - fromBox.height / 2 - markerHeight,
-            xMax: fromCenter.x + fromBox.width / 2 + markerWidth,
-            yMax: fromCenter.y + fromBox.height / 2 + markerHeight,
-        });
-
-        if(toNode.__KityClassName == 'MinderNode') {
-            toPoint = bezierLength.lineRect({
-                x: toCenter.x,
-                y: toCenter.y
-            }, toController, {
-                x: toCenter.x - toBox.width / 2 - markerWidth,
-                y: toCenter.y - toBox.height / 2 - markerHeight,
-                xMax: toCenter.x + toBox.width / 2 + markerWidth,
-                yMax: toCenter.y + toBox.height / 2 + markerHeight,
-            });
-        } else {
-            toPoint = {
-                x: toCenter.x - Math.sign(vector.x) * 5,
-                y: toCenter.y - Math.sign(vector.y) * 5,
+                left: toNode.x,
+                right: toNode.x,
+                top: toNode.y,
+                bottom: toNode.y,
+            };
+            toCenter = {
+                x: toBox.cx,
+                y: toBox.cy,
             };
         }
+
+        var xRagnge = 300, yRange = 200;
+        var ratio = 0.5, angle = 30;
+        var fromPoint, toPoint;
+        var fromController, toController;
+        var vector = kity.Vector.fromPoints(fromCenter, toCenter);
+        var distance = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        var xDistance = vector.x < 0 ? fromBox.right - toCenter.x : toCenter.x - fromBox.left;
+        var oldFromController = false, oldToController = false;
+
+        if (relation.data.controller0 && (relation.data.controller0.x || relation.data.controller0.y)) {
+            fromController = relation.data.controller0;
+            oldFromController = true;
+        }
+
+        if (relation.data.controller1 && (relation.data.controller1.x || relation.data.controller1.y)) {
+            toController = relation.data.controller1;
+            oldToController = true;
+        }
+
+        // 下下连接
+        if (xDistance <= xRagnge) {
+            fromPoint = {x: fromBox.cx, y: fromBox.bottom};
+            toPoint = {x: toBox.cx, y: toBox.bottom};
+            if (!oldFromController) fromController = {x: fromPoint.x, y: fromPoint.y + distance * ratio};
+            if (!oldToController) toController = {x: toPoint.x, y: toPoint.y + distance * ratio};
+            // 右右连接
+            if (Math.abs(vector.y) <= yRange) {
+                fromPoint = {x: fromBox.right, y: fromBox.cy};
+                toPoint = {x: toBox.right, y: toBox.cy};
+                if (!oldFromController) fromController = {x: fromPoint.x + distance * ratio, y: fromPoint.y};
+                if (!oldToController) toController = {x: toPoint.x + distance * ratio, y: toPoint.y};
+            }
+            // 上下连接
+            else {
+                fromPoint = {x: fromBox.cx, y: vector.y < 0 ? fromBox.top : fromBox.bottom};
+                toPoint = {x: toBox.cx, y: vector.y < 0 ? toBox.bottom : toBox.top};
+                if (!oldFromController) fromController = calculatePoint(fromPoint, toPoint, angle, distance * ratio);
+                if (!oldToController) toController = calculatePoint(toPoint, fromPoint, angle, distance * ratio);
+            }
+        }
+        // 左右连接
+        else {
+            fromPoint = {x: vector.x < 0 ? fromBox.left : fromBox.right, y: fromBox.cy};
+            toPoint = {x: vector.x < 0 ? toBox.right : toBox.left, y: toBox.cy};
+            if (!oldFromController) fromController = calculatePoint(fromPoint, toPoint, angle, distance * ratio);
+            if (!oldToController) toController = calculatePoint(toPoint, fromPoint, angle, distance * ratio);
+        }
+
+        toPoint.x = toPoint.x + markerHeight;
 
         return {
             from: fromPoint,
             to: toPoint,
             fromController: fromController,
             toController: toController,
-        }
+        };
     };
 
     // 工具方法， 检测贝塞尔曲线上的点的控制点和顶点是否重叠在一起
