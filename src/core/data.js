@@ -77,8 +77,10 @@ define(function(require, exports, module) {
                 relations: exportRelation(this.getRelations()),
             };
 
-            json.template = this.getTemplate('exportData');
-            json.theme = this.getTheme(null, 'exportData');
+            json.template = 'right';
+            json.templateNew = this.getTemplate('exportData');
+            json.theme = 'fresh-blue';
+            json.themeNew = this.getTheme(null, 'exportData');
             json.version = Minder.version;
 
             return JSON.parse(JSON.stringify(json));
@@ -258,8 +260,8 @@ define(function(require, exports, module) {
 
             this.importNode(this._root, json.root);
             this.importRelation(json.relations);
-            this.setTemplate(json.template || 'default');
-            this.setTheme(json.theme || null);
+            this.setTemplate(json.templateNew || json.template || 'default');
+            this.setTheme(json.themeNew || json.theme || null);
             this.refresh();
 
             /**

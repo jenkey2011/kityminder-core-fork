@@ -65,10 +65,26 @@ define(function(require, exports, module) {
             var prefix = node.isSelected() ? (node.getMinder().isFocused() ? 'selected-' : 'blur-selected-') : '';
             node.isSelected() ? node.rc.addClass('node-selected') && outline.addClass('selected') : node.rc.removeClass('node-selected') && outline.removeClass('selected')
             var fillColor = node.getData('background') || node.getStyle(prefix + 'background') || node.getStyle('background');
-            if (node.getType() === 'main' && node.getStyle('rainbow-branch')) {
-                var idx = node.getIndex();
-                fillColor = rainbowColors[idx % rainbowColors.length];
-                node.setData('background', fillColor);
+
+            if (node.getStyle('rainbow-branch')) {
+                if (!node.getData('background')) {
+                    switch (node.getType()) {
+                        case 'root':
+                            var rootColor = node.getStyle('root-background');
+                            node.setData('background-default', utils.convertToRGBA(rootColor));
+                            break;
+                        case 'main':
+                            var idx = node.getIndex();
+                            fillColor = rainbowColors[idx % rainbowColors.length];
+                            node.setData('background-default', utils.convertToRGBA(fillColor));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else {
+                node.setData('background-default', '');
             }
             outline
                 .setPosition(outlineBox.x, outlineBox.y)
