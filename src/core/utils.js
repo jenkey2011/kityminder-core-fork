@@ -473,4 +473,27 @@ define(function(require, exports) {
         }
         return ret;
     };
+
+    exports.convertToRGBA = function (color) {
+        if (color.startsWith("rgba")) {
+            return color;
+        }
+
+        if (color.startsWith("rgb")) {
+            var rgbValues = color.match(/\d+/g);
+            return 'rgba(' + rgbValues[0] + ', ' + rgbValues[1] + ', ' + rgbValues[2] + ', 1)';
+        }
+
+        if (color.startsWith("#")) {
+            var hex = color.slice(1);
+
+            var r = parseInt(hex.substring(0, 2), 16);
+            var g = parseInt(hex.substring(2, 4), 16);
+            var b = parseInt(hex.substring(4, 6), 16);
+            // return `rgba(${r}, ${g}, ${b}, 1)`;
+            return 'rgba(' + r + ',' + g + ',' + b + ', 1)';
+        }
+
+        return "Invalid color format";
+    }
 });

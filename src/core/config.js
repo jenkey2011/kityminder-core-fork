@@ -3,10 +3,10 @@
  */
 define(function(require, exports) {
     exports.rainbowColors = [
-        '#7029FF',
-        '#2E76F6',
-        '#20A884',
-        '#00A5BC'
+        'rgba(112, 41, 255, 1)',
+        'rgba(46, 118, 246, 1)',
+        'rgba(32, 168, 132, 1)',
+        'rgba(0, 165, 188, 1)',
     ];
 
     exports.mainRainbowColors = [
