@@ -23,7 +23,7 @@ define(function(require, exports, module) {
                 var w = 8, half = w / 2;
                 var shape = new kity.Path('M0,0 L0,' + w + ' L' + w + ',' + half + ' z');
                 this.addShape(shape);
-                this.setRef(0, half).setViewBox(0, 0, w, w).setWidth(w).setHeight(w);
+                this.setRef(half, half).setViewBox(0, 0, w, w).setWidth(w).setHeight(w);
                 this.shape = shape;
                 this.node.setAttribute('markerUnits', 'userSpaceOnUse');
             });
@@ -47,6 +47,7 @@ define(function(require, exports, module) {
             this.lineCopy = new kity.Bezier();
             this.pointGroup = new PointGroup().setVisible(false);
             this.textGroup = new kity.Group();
+            this.rc.setStyle('pointer-events', 'none');
             this.rc.addShapes([this.lineCopy,this.line,this.textGroup,this.pointGroup]);
             this.creatMarker();
             initListener(this);
