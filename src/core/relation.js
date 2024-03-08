@@ -211,6 +211,7 @@ define(function(require, exports, module) {
             this.render();
 
             rc.setVisible(true);
+            rc.setStyle('pointer-events', 'initial');
         }
     });
 
