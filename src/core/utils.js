@@ -294,10 +294,12 @@ define(function(require, exports) {
         return {x: x3, y: y3};
     }
 
-    function getController(fromBox, toBox, vector, distance, xDistance) {
+    function getController(fromBox, toBox, vector) {
         var xRagnge = 300, yRange = 200;
         var ratio = 0.5, angle = 30;
         var fromPoint, toPoint, fromController, toController;
+        var distance = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        var xDistance = vector.x < 0 ? fromBox.right - toBox.cx : toBox.cx - fromBox.left;
 
         if (xDistance <= fromBox.width + 40) {
             // 上下连接
@@ -309,10 +311,11 @@ define(function(require, exports) {
             }
             // 右右连接
             else {
-                fromPoint = {x: fromBox.right, y: fromBox.cy};
-                toPoint = {x: toBox.right, y: toBox.cy};
-                fromController = {x: fromPoint.x + distance * ratio, y: fromPoint.y};
-                toController = {x: toPoint.x + distance * ratio, y: toPoint.y};
+                var isLeft = fromBox.cx < 0 && toBox.cx < 0;
+                fromPoint = {x: isLeft ? fromBox.left : fromBox.right, y: fromBox.cy};
+                toPoint = {x: isLeft ? toBox.left : toBox.right, y: toBox.cy};
+                fromController = {x: fromPoint.x + distance * ratio * (isLeft ? -1 : 1), y: fromPoint.y};
+                toController = {x: toPoint.x + distance * ratio * (isLeft ? -1 : 1), y: toPoint.y};
             }
         }
         else if (xDistance <= xRagnge) {
@@ -392,18 +395,16 @@ define(function(require, exports) {
 
         var fromPoint, toPoint;
         var fromController, toController;
-        var vector = kity.Vector.fromPoints(fromCenter, toCenter);
-        var distance = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-        var xDistance = vector.x < 0 ? fromBox.right - toCenter.x : toCenter.x - fromBox.left;
+        var vector = kity.Vector.fromPoints({x: fromBox.cx, y: fromBox.cy}, {x: toBox.cx, y: toBox.cy});
 
         if (!relation.data.controller0 || (!relation.data.controller0.x || !relation.data.controller0.y)) {
-            fromController = getController(fromBox, toBox, vector, distance, xDistance).fromController;
+            fromController = getController(fromBox, toBox, vector).fromController;
         } else {
             fromController = relation.data.controller0;
         }
 
         if (!relation.data.controller1 || (!relation.data.controller1.x || !relation.data.controller1.y)) {
-            toController = getController(fromBox, toBox, vector, distance, xDistance).toController;
+            toController = getController(fromBox, toBox, vector).toController;
         } else {
             toController = relation.data.controller1;
         }

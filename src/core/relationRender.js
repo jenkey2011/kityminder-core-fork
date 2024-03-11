@@ -95,7 +95,8 @@ define(function(require, exports, module) {
 
         render: function() {
             var km = this.getMinder();
-            this.pointGroup.setVisible(this.isSelected() && km.getStatus() !== 'readonly');
+            var options = km.getOption('relations') || {};
+            this.pointGroup.setVisible(options.edit && this.isSelected() && km.getStatus() !== 'readonly');
             this.textGroup.setVisible(this.data.text || (this.isSelected() && this.getMinder().getStatus() !== 'readonly'));
             this.lineCopy.setStyle('opacity', this.isSelected() ? 1 : 0);
             if (km.isFocused()) {
@@ -159,11 +160,9 @@ define(function(require, exports, module) {
                         if (node !== relation.getFromNode() && node !== relation.getToNode()) {
                             if (pointIndex == 0) {
                                 relation.setData('from', node.getData('id'));
-                                _this.setControllerPoint(pointIndex, currentPoint.getBackward());
                             }
                             else {
                                 relation.setData('to', node.getData('id'));
-                                _this.setControllerPoint(pointIndex, currentPoint.getForward());
                             }
                         }
                     }
@@ -172,7 +171,7 @@ define(function(require, exports, module) {
         });
 
         km.on('mouseup', function() {
-            if(!relation.editable) {
+            if (!relation.editable) {
                 return;
             }
 
