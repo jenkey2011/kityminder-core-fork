@@ -77,10 +77,8 @@ define(function(require, exports, module) {
                 relations: exportRelation(this.getRelations()),
             };
 
-            json.template = 'right';
-            json.templateNew = this.getTemplate('exportData');
-            json.theme = 'fresh-blue';
-            json.themeNew = this.getTheme(null, 'exportData');
+            json.template = this.getTemplate('exportData');
+            json.theme = this.getTheme(null, 'exportData');
             json.version = Minder.version;
 
             return JSON.parse(JSON.stringify(json));

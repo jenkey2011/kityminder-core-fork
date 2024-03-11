@@ -72,5 +72,9 @@ define(function(require, exports, module) {
         getRenderTarget: function() {
             return this._renderTarget;
         },
+
+        setVisible: function(v) {
+            this._rc.setVisible(v);
+        }
     });
 });
