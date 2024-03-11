@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 
     var gradientCache = {}; // 用于缓存生成的渐变
 
-    function createGradient(id, colors, paper, c1) {
+    function createGradient(id, colors, paper, c1, reverse) {
         // 如果缓存中已经有了，直接返回
         if (gradientCache[id]) {
             return gradientCache[id];
@@ -64,7 +64,12 @@ define(function(require, exports, module) {
             g.setEndPosition(1, 0);
             colors.forEach(function(color, index) {
                 // g.addStop(index / (colors.length - 1), color);
-                g.addStop(index === 0 ? c1 : '1', color);
+                if (!reverse) {
+                    g.addStop(index === 0 ? c1 + '%' : '1', color);
+                }
+                else {
+                    g.addStop(index === 1 ? (100 - c1) + '%' : '0', color);
+                }
             });
         });
         paper.addResource(gradient); // 添加到画布资源中
@@ -150,10 +155,16 @@ define(function(require, exports, module) {
                 var gradientId = gradientColors.join('-');
                 var reverseGradientId = gradientColors.slice().reverse().join('-');
                 var paper = this.getPaper();
-                var c1 = isRainbow ? '0' : '80%';
+                var LinearGradientSplit = node.getStyle('connect-gradients-split');
+                var c1 = LinearGradientSplit
+                    ? LinearGradientSplit
+                    : isRainbow ? 30 : 80;
+                if (node.getStyle('connect-gradients-split')) {
+                    c1 = node.getStyle('connect-gradients-split');
+                }
                 // 生成渐变，考虑正反两种情况
                 strokeColor = createGradient(gradientId, gradientColors, paper, c1);
-                reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper);
+                reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper, c1, true);
             }
 
             var strokeWidth = isRoot
