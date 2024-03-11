@@ -218,7 +218,7 @@ define(function(require, exports, module) {
     kity.extendClass(Minder, {
 
         createRelation: function(data) {
-            const options = this.getOption('relations') || {};
+            var options = this.getOption('relations') || {};
             if (!options.show) return;
             var relation = new MinderRelation(data);
             relation.setMinder(this);

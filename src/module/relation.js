@@ -19,7 +19,7 @@ define(function(require, exports, module) {
         var relation = kity.createClass('RelationCommand', {
             base: Command,
             execute: function(km) {
-                const options = km.getOption('relations') || {};
+                var options = km.getOption('relations') || {};
                 if (options.show && options.edit) {
                     this.setContentChanged(false);
                     if(km.relationDrawing) return;
