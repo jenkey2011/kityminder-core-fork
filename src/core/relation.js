@@ -218,6 +218,8 @@ define(function(require, exports, module) {
     kity.extendClass(Minder, {
 
         createRelation: function(data) {
+            const options = this.getOption('relations') || {};
+            if (!options.show) return;
             var relation = new MinderRelation(data);
             relation.setMinder(this);
             relation.create();
@@ -229,7 +231,6 @@ define(function(require, exports, module) {
         attachRelation: function(relation) {
             var rc = relation.getRelationContainer();
             rc.addShape(relation.getRelationRenderContainer());
-            rc.bringTop();
         },
 
         detachRelation: function(relation) {
