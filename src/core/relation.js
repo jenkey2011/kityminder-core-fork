@@ -249,9 +249,9 @@ define(function(require, exports, module) {
 
         removeRelationByNode: function(node) {
             var me = this;
-            var relation = this.getRelationsByNodeId(node.getData('id'));
-            relation.forEach(function (relation) {
-                me.detachRelation(relation);
+            var relations = this.getRelationsByNodeId(node.getData('id'));
+            relations.forEach(function (relation) {
+                me.removeRelationNode(relation);
             });
         },
 

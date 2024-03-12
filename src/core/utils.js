@@ -294,10 +294,11 @@ define(function(require, exports) {
         return {x: x3, y: y3};
     }
 
-    function getController(fromBox, toBox, vector) {
+    function getController(fromBox, toBox) {
         var xRagnge = 300, yRange = 200;
         var ratio = 0.5, angle = 30;
         var fromPoint, toPoint, fromController, toController;
+        var vector = kity.Vector.fromPoints({x: fromBox.cx, y: fromBox.cy}, {x: toBox.cx, y: toBox.cy});
         var distance = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         var xDistance = vector.x < 0 ? fromBox.right - toBox.cx : toBox.cx - fromBox.left;
 
@@ -360,23 +361,15 @@ define(function(require, exports) {
     }
 
     // 求联系线 开始点+结束点+控制点
-    exports.bezierPoint = function(relation, pos) {
+    exports.bezierPoint = function(relation, targetNodeOrPosition) {
         var fromNode = relation.getFromNode();
-        var toNode = relation.getToNode() || pos || {x: 0, y: 0};
+        var toNode = relation.getToNode() || targetNodeOrPosition || {x: 0, y: 0};
         var fromBox = fromNode.getLayoutBox();
-        var fromCenter = {
-            x: fromBox.cx,
-            y: fromBox.cy,
-        };
         var toBox;
-        var toCenter = {};
         if (toNode.__KityClassName == 'MinderNode') {
             toBox = toNode.getLayoutBox();
-            toCenter = {
-                x: toBox.cx,
-                y: toBox.cy,
-            };
-        } else {
+        }
+        else {
             toBox = {
                 cx:  toNode.x,
                 cy: toNode.y,
@@ -387,54 +380,28 @@ define(function(require, exports) {
                 top: toNode.y,
                 bottom: toNode.y,
             };
-            toCenter = {
-                x: toBox.cx,
-                y: toBox.cy,
-            };
         }
 
         var fromPoint, toPoint;
         var fromController, toController;
-        var vector = kity.Vector.fromPoints({x: fromBox.cx, y: fromBox.cy}, {x: toBox.cx, y: toBox.cy});
 
-        if (!relation.data.controller0 || (!relation.data.controller0.x || !relation.data.controller0.y)) {
-            fromController = getController(fromBox, toBox, vector).fromController;
-        } else {
+        if (relation.data.controller0 && (relation.data.controller0.x || relation.data.controller0.y)) {
             fromController = relation.data.controller0;
         }
 
-        if (!relation.data.controller1 || (!relation.data.controller1.x || !relation.data.controller1.y)) {
-            toController = getController(fromBox, toBox, vector).toController;
-        } else {
+        if (relation.data.controller1 && (relation.data.controller1.x || relation.data.controller1.y)) {
             toController = relation.data.controller1;
         }
 
-        fromPoint = bezierLength.lineRect({
-            x: fromCenter.x,
-            y: fromCenter.y
-        }, fromController, {
-            x: fromCenter.x - fromBox.width / 2,
-            y: fromCenter.y - fromBox.height / 2,
-            xMax: fromCenter.x + fromBox.width / 2,
-            yMax: fromCenter.y + fromBox.height / 2,
-        });
+        if (relation.data.fromPoint) fromPoint = getPointAtPath(fromNode, relation.data.fromPoint);
+        if (relation.data.toPoint) toPoint = getPointAtPath(toNode, relation.data.toPoint);
 
-        if(toNode.__KityClassName == 'MinderNode') {
-            toPoint = bezierLength.lineRect({
-                x: toCenter.x,
-                y: toCenter.y
-            }, toController, {
-                x: toCenter.x - toBox.width / 2,
-                y: toCenter.y - toBox.height / 2,
-                xMax: toCenter.x + toBox.width / 2,
-                yMax: toCenter.y + toBox.height / 2,
-            });
-        } else {
-            toPoint = {
-                x: toCenter.x - Math.sign(vector.x) * 5,
-                y: toCenter.y - Math.sign(vector.y) * 5,
-            };
-        }
+        var controls = getController(fromBox, toBox);
+
+        if (!fromController) fromController = controls.fromController;
+        if (!toController) toController = controls.toController;
+        if (!fromPoint) fromPoint = controls.fromPoint;
+        if (!toPoint) toPoint = controls.toPoint;
 
         return {
             from: fromPoint,
@@ -496,5 +463,16 @@ define(function(require, exports) {
         }
 
         return "Invalid color format";
+    };
+
+    // 获取node节点边长百分比下的Point点
+    function getPointAtPath(node, per) {
+        var outlineShape = node.getRenderer('OutlineRenderer')._renderShape;
+        var matrix = node.getRenderContainer().transform.matrix.clone();
+        var originPoint =  kity.g.pointAtPath(outlineShape.pathdata, per);
+        var newMatrix = matrix.translate(originPoint.x, originPoint.y);
+        return newMatrix.getTranslate();
     }
+
+    exports.getPointAtPath = getPointAtPath;
 });

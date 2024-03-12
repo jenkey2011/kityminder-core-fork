@@ -5,6 +5,7 @@ define(function(require, exports, module) {
     var kity = require('./kity');
     var MinderRelation = require('./relation');
     var PointGroup = require('./point');
+    var utils = require('./utils');
 
     var markerMap = {
         createDotMarker: function() {
@@ -127,7 +128,6 @@ define(function(require, exports, module) {
                 pointIndex = -1;
             e.preventDefault();
 
-            // 不可编辑
             if (!relation.editable) {
                 return;
             }
@@ -152,11 +152,12 @@ define(function(require, exports, module) {
                     break;
 
                 case PointGroup.TYPE_VERTEX:
-                    currentPoint.moveTo(mousePoint.x - 5, mousePoint.y + 5);
-                    _this.getLine().getPoint(pointIndex).moveTo(mousePoint.x - 5, mousePoint.y + 5);
-                    _this.setTextPosition();
-                    var node = e.getTargetNode();
+                    var point = mousePoint;
+                    var node = getClosestNode(km, mousePoint);
                     if (node) {
+                        var box = node.getLayoutBox();
+                        var per = getPointPercentage(box, mousePoint);
+                        var point = utils.getPointAtPath(node, per);
                         if (node !== relation.getFromNode() && node !== relation.getToNode()) {
                             if (pointIndex == 0) {
                                 relation.setData('from', node.getData('id'));
@@ -165,7 +166,20 @@ define(function(require, exports, module) {
                                 relation.setData('to', node.getData('id'));
                             }
                         }
+
+                        // 端点移动后将更新端点位置
+                        // 当存在端点位置时，移动控制点，将不在同步更新端点位置
+                        if (pointIndex == 0) {
+                            relation.setData('fromPoint', per);
+                        }
+                        else {
+                            relation.setData('toPoint', per);
+                        }
                     }
+
+                    currentPoint.moveTo(point.x, point.y);
+                    _this.getLine().getPoint(pointIndex).moveTo(point.x, point.y);
+                    _this.setTextPosition();
                     break;
             }
         });
@@ -180,4 +194,55 @@ define(function(require, exports, module) {
             km.fire('contentchange');
         });
     }
+
+    // 获取离鼠标位置最近的Node节点
+    // 最近是指，鼠标点周围15像素内的节点
+    function getClosestNode(km, mousePoint) {
+        var distance = 15;
+        var area = new kity.Box(mousePoint.x - distance, mousePoint.y - distance, distance * 2, distance * 2);
+        var selectedNode;
+        if (selectedNode) return selectedNode;
+
+        km.getRoot().traverse(function(node) {
+            var renderBox = node.getLayoutBox();
+            if (!renderBox.intersect(area).isEmpty()) {
+                selectedNode = node;
+            }
+        });
+
+        return selectedNode;
+    }
+
+    // 获取百分比
+    function getPointPercentage(nodeBox, mousePoint) {
+        var angle = calculateAngle(nodeBox, {x: nodeBox.cx, y: nodeBox.cy}, mousePoint);
+        var percentage = angle / 360;
+        return percentage.toFixed(2);
+    }
+
+    // p1 起点
+    // p2 中点
+    // p3 鼠标点
+    function calculateAngle(p1, p2, p3) {
+        // 计算向量
+        var p1p = { x: p2.x - p1.x, y: p2.y - p1.y };
+        var p2p = { x: p2.x - p3.x, y: p2.y - p3.y };
+
+        // 计算与x轴的角度
+        var angle1 = Math.atan2(p1p.y, p1p.x);
+        var angle2 = Math.atan2(p2p.y, p2p.x);
+
+        // 计算两个角度的差异（弧度）
+        var angleDiff = angle2 - angle1;
+
+        // 转换为度数
+        angleDiff = angleDiff * (180 / Math.PI);
+
+        // 角度调整到0-360度范围
+        if (angleDiff < 0) {
+            angleDiff += 360;
+        }
+
+        return angleDiff;
+      }
 });
