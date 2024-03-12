@@ -74,7 +74,8 @@ define(function(require, exports, module) {
         },
 
         setVisible: function(v) {
-            this._rc.setVisible(v);
+            this._rc.setStyle('opacity', v ? 1 : 0);
+            // this._rc.setVisible(v);
         }
     });
 });
