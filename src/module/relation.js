@@ -139,11 +139,13 @@ define(function(require, exports, module) {
                     var minder = e.minder;
                     var relations = minder.getRelations();
                     if (relations.length > 0) {
-                        relations.forEach(function(relation) {
-                            relation.update();
-                        });
+                        setTimeout(function() {
+                            relations.forEach(function(relation) {
+                                relation.update();
+                            });
 
-                        relations[0].getRelationContainer().bringTop();
+                            relations[0].getRelationContainer().bringTop();
+                        }, 0);
                     }
                 },
 
@@ -159,7 +161,7 @@ define(function(require, exports, module) {
                         nodeRelations.forEach(function(relation) {
                             var fromNode = relation.getFromNode();
                             var toNode = relation.getToNode();
-                            if (fromNode.parent && toNode.parent) {
+                            if (fromNode && fromNode.parent && toNode && toNode.parent) {
                                 _this.attachRelation(relation);
                             }
                             else {
