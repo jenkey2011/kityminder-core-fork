@@ -258,7 +258,13 @@ define(function(require, exports, module) {
                 var r = expander.conf.radius,
                     l = expander.conf.left,
                     lw = expander.conf.lineWidth;
-                this.expander.setTranslate(box.width + box.x + r + l + lw / 2 + .5, 0);
+                var w = r + l + lw / 2 + .5;
+                var dir = node.getLayoutPointPreview().x >= 0 ? 'right' : 'left';
+                var xMap = {
+                    left: box.x - w,
+                    right: box.width + box.x + w
+                };
+                this.expander.setTranslate(xMap[dir], 0);
             }
         });
 
