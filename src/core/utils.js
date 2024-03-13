@@ -496,4 +496,21 @@ define(function(require, exports) {
 
         return "Invalid color format";
     }
+
+    exports.getColorForIndex = function(index, segmentIndex, segmentColor) {
+        var cleanedSegmentColor = [];
+        for (var j = 0; j < segmentColor.length; j++) {
+            cleanedSegmentColor.push(segmentColor[j].replace(/\s/g, ''));
+        }
+
+        for (var i = 0; i < segmentIndex.length; i++) {
+            if (i === 0 && index <= segmentIndex[i]) {
+                return cleanedSegmentColor[i].split('-');
+            } else if (i > 0 && index <= segmentIndex[i] && index > segmentIndex[i - 1]) {
+                return cleanedSegmentColor[i].split('-');
+            }
+        }
+
+        return segmentColor[segmentColor.length - 1].split('-');
+    };
 });
