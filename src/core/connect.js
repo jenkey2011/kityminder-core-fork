@@ -167,6 +167,30 @@ define(function(require, exports, module) {
                 reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper, c1, true);
             }
 
+            var segmentIndex = node.getStyle('segment-index');
+            if (segmentIndex) {
+                var segmentColors = node.getStyle('segment-color');
+                var level = node.getLevel();
+                var gradientColors = utils.getColorForIndex(level, segmentIndex, segmentColors)
+
+                if (gradientColors && gradientColors.length === 2) {
+                    // 生成渐变ID，确保唯一性
+                    var gradientId = gradientColors.join('-');
+                    var reverseGradientId = gradientColors.slice().reverse().join('-');
+                    var paper = this.getPaper();
+                    var LinearGradientSplit = node.getStyle('connect-gradients-split');
+                    var c1 = LinearGradientSplit
+                        ? LinearGradientSplit
+                        : isRainbow ? 30 : 80;
+                    if (node.getStyle('connect-gradients-split')) {
+                        c1 = node.getStyle('connect-gradients-split');
+                    }
+                    // 生成渐变，考虑正反两种情况
+                    strokeColor = createGradient(gradientId, gradientColors, paper, c1);
+                    reverseStrokeColor = createGradient(reverseGradientId, gradientColors.slice().reverse(), paper, c1, true);
+                }
+            }
+
             var strokeWidth = isRoot
                 ? node.getStyle('connect-width') || 2
                 : node.getStyle('sub-connect-width') || 1;

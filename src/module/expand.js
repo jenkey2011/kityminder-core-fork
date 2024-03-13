@@ -6,6 +6,7 @@ define(function(require, exports, module) {
     var Command = require('../core/command');
     var Module = require('../core/module');
     var Renderer = require('../core/render');
+    var isMobile = kity.Browser.isMobile();
 
     Module.register('Expand', function() {
         var minder = this;
@@ -153,9 +154,9 @@ define(function(require, exports, module) {
             constructor: function(node) {
                 this.callBase();
                 var conf = this.conf = {
-                    gap: 6,
+                    gap: isMobile ? 6 : 4,
                     left: 0,
-                    radius: 10,
+                    radius: isMobile ? 10 : 8,
                     lineWidth: 2,
                 };
                 this.outline = new kity.Circle(conf.radius).stroke('#2E76F6', conf.lineWidth).fill('white');
@@ -213,16 +214,29 @@ define(function(require, exports, module) {
                     pathData = []
                     this.lenNumber.setContent(length);
                     this.lenNumber.setOpacity(1);
-
-                    if (length > 99) {
-                        this.lenNumber.setContent('...').setSize(14).setX(-r/2 - 1).setY(-3);
-                    }
-                    else if (length > 9) {
-                        this.lenNumber.setSize(12).setX(-r/2 - 2).setY(0).setY(lw / 2);
+                    if (isMobile) {
+                        if (length > 99) {
+                            this.lenNumber.setContent('...').setSize(14).setX(-r/2 - 1).setY(-3);
+                        }
+                        else if (length > 9) {
+                            this.lenNumber.setSize(12).setX(-r/2 - 2).setY(0).setY(lw / 2);
+                        }
+                        else {
+                            this.lenNumber.setSize(14).setX(-r/2 + lw /2).setY(lw / 2);
+                        }
                     }
                     else {
-                        this.lenNumber.setSize(14).setX(-r/2 + lw /2).setY(lw / 2);
+                        if (length > 99) {
+                            this.lenNumber.setContent('...').setSize(13).setX(-r/2 - 1).setY(-3);
+                        }
+                        else if (length > 9) {
+                            this.lenNumber.setSize(11).setX(-r/2 - 2).setY(0).setY(lw / 2);
+                        }
+                        else {
+                            this.lenNumber.setSize(13).setX(-r/2 + lw /2).setY(lw / 2);
+                        }
                     }
+
                 } else {
                     this.removeClass('collapse');
                     node.rc.removeClass('collapse');
