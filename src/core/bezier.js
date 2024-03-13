@@ -101,9 +101,9 @@ define(function(require, exports, module) {
     });
 
     kity.extendClass(MinderRelation, {
-        updateLine: function(pos) {
+        updateLine: function(targetNodeOrPosition) {
             var _this = this;
-            var bezierData = this.getBezierData(pos);
+            var bezierData = this.getBezierData(targetNodeOrPosition);
             var points = bezierData.points;
             var controllers = bezierData.controller;
             this.getLine().setBezierPoints(points);
@@ -114,11 +114,11 @@ define(function(require, exports, module) {
                 }
                 if (index === 0) {
                     _this.pointGroup.addPoint(points[index].clone(), index).setForward(controller.x, controller.y);
-                    item.setForward(controller.x, controller.y).setForward(controller.x, controller.y);
+                    item.setForward(controller.x, controller.y);
                 }
                 else if(index === 1) {
                     _this.pointGroup.addPoint(points[index].clone(), index).setBackward(controller.x, controller.y);
-                    item.setForward(controller.x, controller.y).setBackward(controller.x, controller.y);
+                    item.setBackward(controller.x, controller.y);
                 }
             });
 
@@ -156,8 +156,8 @@ define(function(require, exports, module) {
             });
         },
 
-        getBezierData: function(pos) {
-            var bezierData = utils.bezierPoint(this, pos);
+        getBezierData: function(targetNodeOrPosition) {
+            var bezierData = utils.bezierPoint(this, targetNodeOrPosition);
             var fromPoint = bezierData.from,
                 toPoint = bezierData.to;
             return {

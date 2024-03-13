@@ -19,15 +19,18 @@ define(function(require, exports, module) {
         var relation = kity.createClass('RelationCommand', {
             base: Command,
             execute: function(km) {
-                this.setContentChanged(false);
-                if(km.relationDrawing) return;
-                relationActivator.startRelation();
-                var nodes = km.getSelectedNodes();
-                if(nodes.length > 2) return;
-                if(nodes.length > 0) {
-                    km.fire('relationChange', {
-                        node: nodes
-                    });
+                var options = km.getOption('relations') || {};
+                if (options.show && options.edit) {
+                    this.setContentChanged(false);
+                    if(km.relationDrawing) return;
+                    relationActivator.startRelation();
+                    var nodes = km.getSelectedNodes();
+                    if(nodes.length > 2) return;
+                    if(nodes.length > 0) {
+                        km.fire('relationChange', {
+                            node: nodes
+                        });
+                    }
                 }
             },
         });
@@ -52,7 +55,9 @@ define(function(require, exports, module) {
                 },
 
                 relationKeyMove: function(e) {
-                    minderRelation.updateLine(e.getPosition());
+                    if (minderRelation) {
+                        minderRelation.updateLine(e.getTargetNode() || e.getPosition());
+                    }
                 },
 
                 renderRelationAry: function(nodes) {
@@ -66,7 +71,7 @@ define(function(require, exports, module) {
                         if (relationAry.length > 0) {
                             if (!minderRelation) {
                                 minderRelation = minder.createRelation({from: relationAry[0].getData('id')});
-                                minderRelation.create();
+                                minderRelation && minderRelation.create();
                             }
                         }
                         if (relationAry.length > 1) {
@@ -133,9 +138,15 @@ define(function(require, exports, module) {
                 'contentchange': function(e) {
                     var minder = e.minder;
                     var relations = minder.getRelations();
-                    relations.forEach(function(relation) {
-                        relation.update();
-                    });
+                    if (relations.length > 0) {
+                        setTimeout(function() {
+                            relations.forEach(function(relation) {
+                                relation.update();
+                            });
+
+                            relations[0].getRelationContainer().bringTop();
+                        }, 0);
+                    }
                 },
 
                 'nodedetach': function(e) {
@@ -150,7 +161,7 @@ define(function(require, exports, module) {
                         nodeRelations.forEach(function(relation) {
                             var fromNode = relation.getFromNode();
                             var toNode = relation.getToNode();
-                            if (fromNode.parent && toNode.parent) {
+                            if (fromNode && fromNode.parent && toNode && toNode.parent) {
                                 _this.attachRelation(relation);
                             }
                             else {
