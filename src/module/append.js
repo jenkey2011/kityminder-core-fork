@@ -64,7 +64,13 @@ define(function(require, exports, module) {
             var r = appender.conf.radius,
                 l = appender.conf.left,
                 lw = appender.conf.lineWidth;
-            this.appender.setTranslate(box.width + box.x + r + l + lw / 2 + .5, 0);
+            var w = r + l + lw / 2 + .5;
+            var dir = node.getLayoutPointPreview().x >= 0 ? 'right' : 'left';
+            var xMap = {
+                left: box.x - w,
+                right: box.width + box.x + w
+            };
+            this.appender.setTranslate(xMap[dir], 0);
         }
     });
 

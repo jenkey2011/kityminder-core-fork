@@ -272,13 +272,13 @@ define(function(require, exports, module) {
                 var r = expander.conf.radius,
                     l = expander.conf.left,
                     lw = expander.conf.lineWidth;
-                // var vector = node.getLayoutVectorIn().normalize(expander.radius + node.getStyle('stroke-width'));
-                // var position = node.getVertexIn().offset(vector.reverse());
-                // console.log('vector', vector);
-                // console.log('pos', position);
-
-                this.expander.setTranslate(box.width + box.x + r + l + lw / 2 + .5, 0);
-                // this.expander.setTranslate(position);
+                var w = r + l + lw / 2 + .5;
+                var dir = node.getLayoutPointPreview().x >= 0 ? 'right' : 'left';
+                var xMap = {
+                    left: box.x - w,
+                    right: box.width + box.x + w
+                };
+                this.expander.setTranslate(xMap[dir], 0);
             }
         });
 
