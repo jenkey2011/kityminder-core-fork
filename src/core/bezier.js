@@ -80,11 +80,7 @@ define(function(require, exports, module) {
                 },
                 'blur': function() {
                     if (!this.isFocused()) {
-                        this._selectedRelation.forEach(function(relation){
-                            relation.pointGroup.items.forEach(function(item){
-                                item.stroke('rgba(99, 115, 130, 0.5)');
-                            });
-                        })
+                        this.removeAllRelationSelected();
                     }
                 },
                 'focus': function() {
