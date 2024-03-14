@@ -64,7 +64,21 @@ define(function(require, exports, module) {
             var r = appender.conf.radius,
                 l = appender.conf.left,
                 lw = appender.conf.lineWidth;
+<<<<<<< Updated upstream
             this.appender.setTranslate(box.width + box.x + r + l + lw / 2 + .5, 0);
+=======
+            var w = r + l + lw / 2 + .5;
+            var dir = node.getLayoutBox().x >= 0 ? 'right' : 'left';
+            // root x 是固定的 默认朝向右侧即可
+            if (node.getType() === 'root') {
+                dir = 'right';
+            }
+            var xMap = {
+                left: box.x - w,
+                right: box.width + box.x + w
+            };
+            this.appender.setTranslate(xMap[dir], 0);
+>>>>>>> Stashed changes
         }
     });
 
