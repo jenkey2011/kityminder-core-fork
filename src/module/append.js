@@ -65,7 +65,11 @@ define(function(require, exports, module) {
                 l = appender.conf.left,
                 lw = appender.conf.lineWidth;
             var w = r + l + lw / 2 + .5;
-            var dir = node.getLayoutPointPreview().x >= 0 ? 'right' : 'left';
+            var dir = node.getLayoutBox().x >= 0 ? 'right' : 'left';
+            // root x 是固定的 默认朝向右侧即可
+            if (node.getType() === 'root') {
+                dir = 'right';
+            }
             var xMap = {
                 left: box.x - w,
                 right: box.width + box.x + w

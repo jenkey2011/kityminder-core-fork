@@ -273,7 +273,7 @@ define(function(require, exports, module) {
                     l = expander.conf.left,
                     lw = expander.conf.lineWidth;
                 var w = r + l + lw / 2 + .5;
-                var dir = node.getLayoutPointPreview().x >= 0 ? 'right' : 'left';
+                var dir = node.getLayoutBox().x >= 0 ? 'right' : 'left';
                 var xMap = {
                     left: box.x - w,
                     right: box.width + box.x + w
