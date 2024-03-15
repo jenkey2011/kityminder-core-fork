@@ -66,6 +66,9 @@ define(function(require, exports, module) {
             }
             else if (utils.isObject(textOrData)) {
                 utils.extend(this.data, utils.omitEmptyKey(textOrData));
+                // 特殊处理，连接点定位可能是0，表示在起点位置
+                if (textOrData.fromPoint === 0) utils.extend(this.data, {fromPoint: 0});
+                if (textOrData.toPoint === 0) utils.extend(this.data, {toPoint: 0});
             }
         },
 

@@ -44,6 +44,7 @@ define(function(require, exports, module) {
                 relationKeyDown: function(e) {
                     var downNode = e.getTargetNode();
                     if (downNode && downNode !== relationAry[0]) {
+                        minder.removeAllSelectedNodes();
                         minder.fire('relationChange', {
                             node: downNode
                         });

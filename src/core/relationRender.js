@@ -171,14 +171,17 @@ define(function(require, exports, module) {
                         // 当存在端点位置时，移动控制点，将不在同步更新端点位置
                         if (pointIndex == 0) {
                             relation.setData('fromPoint', per);
+                            _this.setControllerPoint(pointIndex, currentPoint.getForward());
                         }
                         else {
                             relation.setData('toPoint', per);
+                            _this.setControllerPoint(pointIndex, currentPoint.getBackward());
                         }
                     }
 
                     currentPoint.moveTo(point.x, point.y);
                     _this.getLine().getPoint(pointIndex).moveTo(point.x, point.y);
+                    _this.lineCopy.setStyle('opacity', 0);
                     _this.setTextPosition();
                     break;
             }

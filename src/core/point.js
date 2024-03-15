@@ -56,14 +56,14 @@ define(function(require, exports, module) {
             this.initGroup();
         },
         initGroup: function() {
-            this.vertextRect0 = new kity.Rect();
-            this.forwardPoint0 = new kity.Circle();
-            this.backwardPoint0 = new kity.Circle();
+            this.vertextRect0 = new kity.Rect().addClass('relation-control');
+            this.forwardPoint0 = new kity.Circle().addClass('relation-control');
+            this.backwardPoint0 = new kity.Circle().addClass('relation-control');
             this.line0 = new kity.Line();
 
-            this.vertextRect1 = new kity.Rect();
-            this.forwardPoint1 = new kity.Circle();
-            this.backwardPoint1 = new kity.Circle();
+            this.vertextRect1 = new kity.Rect().addClass('relation-control');
+            this.forwardPoint1 = new kity.Circle().addClass('relation-control');
+            this.backwardPoint1 = new kity.Circle().addClass('relation-control');
             this.line1 = new kity.Line();
 
             this.addShapes([this.line0, this.vertextRect0, this.forwardPoint0, this.line1, this.vertextRect1, this.backwardPoint1]);
