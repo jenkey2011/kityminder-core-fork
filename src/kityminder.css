@@ -120,3 +120,7 @@
 .km-view g[id^=minder_node]:hover g[id^=node_expander] {
     opacity: 1;
 }
+
+.km-view .relation-control:hover {
+    cursor: pointer;
+}

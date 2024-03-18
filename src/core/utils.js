@@ -393,8 +393,8 @@ define(function(require, exports) {
             toController = relation.data.controller1;
         }
 
-        if (relation.data.fromPoint) fromPoint = getPointAtPath(fromNode, relation.data.fromPoint);
-        if (relation.data.toPoint) toPoint = getPointAtPath(toNode, relation.data.toPoint);
+        if (relation.data.fromPoint >= 0) fromPoint = getPointAtPath(fromNode, relation.data.fromPoint);
+        if (relation.data.toPoint >= 0) toPoint = getPointAtPath(toNode, relation.data.toPoint);
 
         var controls = getController(fromBox, toBox);
 
@@ -467,11 +467,11 @@ define(function(require, exports) {
 
     // 获取node节点边长百分比下的Point点
     function getPointAtPath(node, per) {
-        var outlineShape = node.getRenderer('OutlineRenderer')._renderShape;
-        var matrix = node.getRenderContainer().transform.matrix.clone();
-        var originPoint =  kity.g.pointAtPath(outlineShape.pathdata, per);
-        var newMatrix = matrix.translate(originPoint.x, originPoint.y);
-        return newMatrix.getTranslate();
+        var shapeNode = node.getRenderer('OutlineRenderer')._renderShape.node;
+        var length = shapeNode.getTotalLength() * (per - .07);
+        var point =  shapeNode.getPointAtLength(length);
+        var newPoint = node.getLayoutPoint().offset(point);
+        return newPoint;
     }
 
     exports.getColorForIndex = function(index, segmentIndex, segmentColor) {
