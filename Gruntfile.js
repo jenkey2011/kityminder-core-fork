@@ -7,6 +7,7 @@ module.exports = function(grunt) {
 
     // These plugins provide necessary tasks.
     /* [Build plugin & task ] ------------------------------------*/
+    grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-module-dependence');
     grunt.loadNpmTasks('grunt-replace');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -37,7 +38,14 @@ module.exports = function(grunt) {
         pkg: pkg,
 
         clean: {
-            last: 'dist'
+            last: 'dist',
+            ts: 'dist-ts'
+        },
+
+        ts: {
+            default: {
+                tsconfig: './tsconfig.json'
+            }
         },
 
         // watch
@@ -63,12 +71,12 @@ module.exports = function(grunt) {
         // resolve dependence
         dependence: {
             options: {
-                base: 'src',
+                base: 'dist-ts',
                 entrance: 'expose-kityminder'
             },
             merge: {
                 files: [{
-                    src: 'src/**/*.js',
+                    src: 'dist-ts/**/*.js',
                     dest: 'dist/kityminder.core.js'
                 }]
             }
@@ -108,8 +116,8 @@ module.exports = function(grunt) {
 
 
     // Build task(s).
-    grunt.registerTask('build', ['clean', 'dependence', 'concat:build', 'uglify:minimize', 'copy']);
-    grunt.registerTask('build:watch', ['clean', 'dependence', 'concat:build', 'copy', 'watch']);
+    grunt.registerTask('build', ['clean', 'ts', 'dependence', 'concat:build', 'uglify:minimize', 'copy']);
+    grunt.registerTask('build:watch', ['clean', 'ts', 'dependence', 'concat:build', 'copy', 'watch']);
     grunt.registerTask('dev', ['browserSync', 'watch']);
 
 };
