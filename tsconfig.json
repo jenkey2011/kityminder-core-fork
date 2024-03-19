@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "amd",
+      "outDir": "./dist-ts",
+      "rootDir": "./src",
+      "allowJs": true,
+      "strict": false,
+      "sourceMap": false,
+      "esModuleInterop": true,
+      "moduleResolution": "Node",
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}

@@ -7,3 +7,5 @@ _drafts/
 bower_components
 
 dist/
+dist-ts/
+.tscache

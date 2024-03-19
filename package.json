@@ -42,6 +42,7 @@
     "seajs": "^2.3.0"
   },
   "devDependencies": {
+    "@types/node": "^20.11.29",
     "cz-conventional-changelog": "^1.1.5",
     "grunt": "~0.4.1",
     "grunt-browser-sync": "^2.2.0",
@@ -52,6 +53,8 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-module-dependence": "~0.2.1",
     "grunt-replace": "~0.8.0",
+    "grunt-ts": "^6.0.0-beta.22",
+    "typescript": "^5.4.2",
     "uglify-js": "^2.8.29"
   },
   "config": {

@@ -1,12 +1,13 @@
+// @ts-ignore
 define(function(require, exports, module) {
-    var kity = require('./kity');
-    var utils = require("./utils");
-    var Minder = require('./minder');
-    var MinderRelation = require('./relation');
-    var Module = require('./module');
-    var Command = require('./command');
+    const kity = require('./kity');
+    const utils = require("./utils");
+    const Minder = require('./minder');
+    const MinderRelation = require('./relation');
+    const Module = require('./module');
+    const Command = require('./command');
 
-    var dashStyleMap = {
+    const dashStyleMap = {
         solid: '0',
         sysDash: '2',
         sysDot: '2',
